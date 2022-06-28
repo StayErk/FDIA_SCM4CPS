@@ -1,1 +1,3 @@
-disp("hello world")
+disp("hello world");
+a = 2 + 2;
+disp(a)
