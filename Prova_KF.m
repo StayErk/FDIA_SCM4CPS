@@ -1,7 +1,7 @@
 % Prova Kalman Filter 
 
-% Modelloç
-% x[n + 1] = Ax[n] + Bu[n] + Gw[n]
+% Modello
+% x[n + 1] = Ax[n] + Bu[n] + Gw[n] (in the example B = G)
 %     y[n] = Cx[n] + Du[n] + Hw[n] + v[n]
 
 A = [1.1269, -0.4940, 0.1129; 1, 0, 0; 0, 1, 0];
