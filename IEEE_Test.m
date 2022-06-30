@@ -28,18 +28,18 @@ Q = 2.3;
 R = 1;
 
 
-plant = ss(A, [0;1], C, 0, Ts, 'InputName', {'w'}, 'OutputName', 'y');
-plant.InputName = {'w'};
+plant = ss(A, [0;1], C, 0, Ts, 'InputName', {''}, 'OutputName', 'y');
+plant.InputName = {'u', 'w'};
 plant.OutputName = {'yt'};
 
 noiseBlock = sumblk('y = yt + v');
 
 [kalman_filter, filter_gain, prediction_err_cov, ~, err_cov] = kalman(sys, Q, R);
 
-kalman_filter.InputName = {'y'};
+kalman_filter.InputName = {'u', 'y'};
 kalman_filter.OutputName = {'y_hat'};
 
-Model = connect(plant, noiseBlock, kalman_filter, { 'w', 'v'}, {'yt', 'y_hat'});
+Model = connect(plant, noiseBlock, kalman_filter, {'u', 'w', 'v'}, {'yt', 'y_hat'});
 
 
 
