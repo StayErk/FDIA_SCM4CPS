@@ -18,32 +18,35 @@ function [filtered_sig, residue]= kalmanfilter(signal,Q_in,R_in,simulation_time)
     
     filtered_sig = zeros(size(signal));
     for i=1:max(size(signal))
-        
-        xn_nm1=x0;
-        
-        c=[cos(w*time_vec(i)) -sin(w*time_vec(i))];
-        
-        %1 Corresponding to flowchart chapter 3
-        pn_nm1=A*p0*A'+Q;
-        
-        %2 Corresponding to flowchart 2
-        kn=A*pn_nm1*c'*inv(c*pn_nm1*c'+R);
-        
-        %3 Corresponding to flowchart chapter 3
-        xnn=xn_nm1+kn*(signal(i)-c*xn_nm1);
-        
-        %4 Corresponding to flowchart chapter 3
-        pnn=pn_nm1-kn*c*pn_nm1;
-        
-        z1(i)=xnn(1);
-        z2(i)=xnn(2);
+        % x_hat(k|k-1) = A x_hat(k-1)
+        x_hat_pred = A*x0;
 
-        %recreating the sinusoid
-        filtered_sig(i)=c*[z1(i);z2(i)];
-        residue(i) = signal(i)-c*xn_nm1;
+        C = [cos(w*time_vec(i)) -sin(w*time_vec(i))];
         
-        x0=xnn;
-        p0=pnn;
+        %1 prediction error covariance P(k|k-1) = A P(k-1) A'+ Q
+        pre_error_cov = A*p0*A'+Q;
+        
+        %2 kalman gain equation k(k) = P(k|k-1) C' (C P(k|k-1) C' + R)^-1
+        K = A*pre_error_cov*C'*inv(C*pre_error_cov*C'+R);
+        
+        %3 filter equation x_hat(k) = x_hat(k|k-1) + k(k)( y(k) - C
+        %x_hat(k|k-1) )
+        x_hat = x_hat_pred + K*(signal(i)-C*x_hat_pred);
+        
+        %4 error covariance P(k) = (I - k(k) C) P(k|k-1)
+        error_cov = pre_error_cov-K*C*pre_error_cov;
+        
+        z1(i)=x_hat(1);
+        z2(i)=x_hat(2);
+
+        %recreating the sinusoid   y_hat = C x_hat
+        filtered_sig(i)=C*[z1(i);z2(i)];
+        
+        % residuo: r(t) = y(t)-y_hat(t|t-1)
+        residue(i) = signal(i)-C*x_hat_pred;
+        
+        x0=x_hat;
+        p0=error_cov;
         
     end
 end
