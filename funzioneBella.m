@@ -1,4 +1,4 @@
-function [filtered_sig, residue, cov_matrix, p0, K, state_error]= kalmanfilter(signal,Q_in,R_in,simulation_time,x)
+function [filtered_sig, residue, cov_matrix, p0, K, state_error, x_hat]= kalmanfilter(signal,Q_in,R_in,simulation_time,x)
     %this Kalman filter has been modified to follow an input siusoidal
     %"signal" with approximatley 60 Hz.
     %Q_in and R_in are tuning parameters.
@@ -13,8 +13,8 @@ function [filtered_sig, residue, cov_matrix, p0, K, state_error]= kalmanfilter(s
     Q=Q_in;
     R=R_in;
     K =0;
-    state_error1 = zeros(200);
-    state_error2 = zeros(200);
+    state_error1 = zeros(length(signal));
+    state_error2 = zeros(length(signal));
     state_error = [state_error1; state_error2];
     z1 = zeros(size(signal));
     z2 = zeros(size(signal));
@@ -56,4 +56,8 @@ function [filtered_sig, residue, cov_matrix, p0, K, state_error]= kalmanfilter(s
         K = K;
         
     end
+    state_error = [state_error1; state_error2];
+    x_hat = zeros(200, 2);
+    x_hat(:,1) = z1; 
+    x_hat(:,2) = z2;
 end
