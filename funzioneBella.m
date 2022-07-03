@@ -15,7 +15,7 @@ function [filtered_sig, residue, cov_matrix, p0, K, state_error, x_hat]= kalmanf
     K =0;
     state_error1 = zeros(length(signal));
     state_error2 = zeros(length(signal));
-    state_error = [state_error1; state_error2];
+    state_error = zeros(length(signal), 2);
     z1 = zeros(size(signal));
     z2 = zeros(size(signal));
     residue = zeros(size(signal));
@@ -56,7 +56,8 @@ function [filtered_sig, residue, cov_matrix, p0, K, state_error, x_hat]= kalmanf
         K = K;
         
     end
-    state_error = [state_error1; state_error2];
+    state_error(:,1) = state_error1;
+    state_error(:,2) = state_error2;
     x_hat = zeros(200, 2);
     x_hat(:,1) = z1; 
     x_hat(:,2) = z2;
