@@ -48,7 +48,3 @@ function [filtered_sig, residue, cov_matrix, p0, K,  x_hat,P1]= kalmanfilter(y,Q
         K = K;
         
     end
-    x_hat = zeros(200, 2);
-    x_hat(:,1) = z1; 
-    x_hat(:,2) = z2;
-end
